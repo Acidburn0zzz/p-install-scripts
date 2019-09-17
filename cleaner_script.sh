@@ -23,12 +23,8 @@ do_config_for_app(){
     case "$app" in
         kalu)
             mkdir -p /etc/skel/.config/kalu
-            #mkdir -p /home/$NEW_USER/.config/kalu
-            # add "Last=<latest-headline>" to news.conf, but don't overwrite the file
             printf "Last=" >> /etc/skel/.config/kalu/news.conf
             do_arch_news_latest_headline >> /etc/skel/.config/kalu/news.conf
-            #cat /etc/skel/.config/kalu/news.conf >> /home/$NEW_USER/.config/kalu/news.conf
-            #chown --recursive $NEW_USER:$NEW_USER /home/$NEW_USER/.config        # what if group name is not the same as user name?
             ;;
         update-mirrorlist)
             test -x /usr/bin/$app && {
@@ -57,7 +53,6 @@ sed -i 's/volatile/auto/g' /etc/systemd/journald.conf 2>>/tmp/.errlog
 
 do_clean_archiso(){
 
-# clean out archiso files from install 
 rm -f /etc/sudoers.d/g_wheel 2>>/tmp/.errlog
 rm -f /var/lib/NetworkManager/NetworkManager.state 2>>/tmp/.errlog
 sed -i 's/.*pam_wheel\.so/#&/' /etc/pam.d/su 2>>/tmp/.errlog
@@ -81,9 +76,6 @@ lspci | grep -i "virtualbox" >/dev/null
 if [[ $? == 0 ]]
     then
         :      
-        # Depends on which vbox package we're installing  
-        #systemctl enable vboxservice
-        #pacman -Rnsdd virtualbox-host-dkms --noconfirm
     else
         for xx in virtualbox-guest-utils virtualbox-guest-modules-arch virtualbox-guest-dkms ; do
             test -n "$(pacman -Q $xx 2>/dev/null)" && pacman -Rnsdd $xx --noconfirm
