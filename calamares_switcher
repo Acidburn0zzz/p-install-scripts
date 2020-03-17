@@ -1,21 +1,8 @@
 #!/bin/bash
 
-	DIALOG=yad
-	INFO="image=gtk-dialog-info"
-	QUESTION="image=gtk-dialog-question"
-	WARNING="image=gtk-dialog-warning"
-	ERROR="image=gtk-dialog-error"
-
-	#buttons
-	BUTTON0="button"
-	BUTTON1="button"
-	BUTTON0NUM=":0"
-	BUTTON1NUM=":1"
-
-
 # Easiest way, as long everything is done just overwrite the file
 
-online_changes(){
+_online(){
 
 sudo cp -praf /usr/share/calamares/settings.conf_online /usr/share/calamares/settings.conf
 sudo cp -praf /usr/share/calamares/modules/packages.conf_online /usr/share/calamares/modules/packages.conf
@@ -23,7 +10,7 @@ sudo cp -praf /usr/share/calamares/modules/welcome.conf_online /usr/share/calama
 
 }
 
-offline_changes(){
+_offline(){
 
 sudo cp -praf /usr/share/calamares/settings.conf_offline /usr/share/calamares/settings.conf
 sudo cp -praf /usr/share/calamares/modules/packages.conf_offline /usr/share/calamares/modules/packages.conf
@@ -31,18 +18,24 @@ sudo cp -praf /usr/share/calamares/modules/welcome.conf_offline /usr/share/calam
 
 }
 
+_cli(){
+:
+
+}
+
 run_calamares(){
 
-pkexec /usr/bin/calamares -d > /home/liveuser/endeavour-install.log
-cat /home/liveuser/endeavour-install.log | curl -F 'f:1=<-' ix.io
+pkexec /usr/bin/calamares -d > /home/liveuser/portergos-install.log
+cat /home/liveuser/portergos-install.log | curl -F 'f:1=<-' ix.io
 
 }
 choose_method(){
 
-ANSWER=$(yad --width=400 --height=100 --center --on-top --title="Please choose an option for installation" --list --separator="" --column="Install EndeavourOS" "Online (choose your desktop)" "Offline (install live desktop)")
+ANSWER=$(yad --width=400 --height=100 --center --on-top --title="Please choose an option for installation" --list --separator="" --column="Install Portergos" "CLI installer (Offline)" "Calamares Online (choose desktop - Arch vanilla)" "Calamares Offline")
 
-    if [[ $ANSWER == "Online (choose your desktop)" ]]; then online_changes; run_calamares; fi
-    if [[ $ANSWER == "Offline (install live desktop)" ]]; then offline_changes; run_calamares; fi
+    if [[ $ANSWER == "CLI installer (Offline)" ]]; then _cli; run_calamares; fi
+    if [[ $ANSWER == "Calamares Offline" ]]; then _offline; run_calamares; fi
+    if [[ $ANSWER == "Calamares Online (choose desktop - Arch vanilla)" ]]; then _online; run_calamares; fi
 
 }
 
